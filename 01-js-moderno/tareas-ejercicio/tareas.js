@@ -15,6 +15,13 @@ export function addTask(task) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
+// Edita una tarea y la guarda en localStorage
+export function editTask(index, newTask) {
+  const tasks = getTasks();
+  tasks[index] = newTask;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
 // Elimina una tarea por índice y actualiza localStorage
 export function removeTask(index) {
   const tasks = getTasks();

@@ -1,5 +1,5 @@
 // Importa las funciones del módulo de tareas
-import { getTasks, addTask, removeTask, editTask } from './tareas.js';
+import { getTasks, addTask, removeTask, editTask, toggleTaskCompleted } from './tareas.js';
 
 // Referencias a los elementos del DOM
 const form = document.getElementById('task-form');
@@ -7,21 +7,40 @@ const input = document.getElementById('task-input');
 const list = document.getElementById('task-list');
 
 // Renderiza la lista de tareas en el DOM
-function renderTasks() {
+function renderTasks(filter = "all") {
   list.innerHTML = '';
+
   getTasks().forEach((task, idx) => {
+    // Saltear tareas segun el filtro
+    if (
+      (filter === 'completed' && !task.completed) ||
+      (filter === 'pending' && task.completed)
+    ) {
+      return;
+    }
+
     const li = document.createElement('li');
-    li.textContent = task;
-    // TODO: Agrega aquí la lógica para filtrar tareas completadas/pendientes
+    li.textContent = task.name;
+
+    // Checkbox para marcar como completada
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = task.completed;
+    checkbox.onchange = () => {
+      toggleTaskCompleted(idx);
+      renderTasks(filter);
+    };
+    li.appendChild(checkbox);
+
 
     //Botón para editar la tarea
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Editar';
     editBtn.onclick = () => {
-      const newTask = prompt('Nuevo nombre:', task);
-      if (newTask) {
-        editTask(idx, newTask)
-        renderTasks();
+      const newTaskName = prompt('Nuevo nombre:', task.name);
+      if (newTaskName) {
+        editTask(idx, newTaskName)
+        renderTasks(filter);
       }
     };
     li.appendChild(editBtn);
@@ -31,11 +50,10 @@ function renderTasks() {
     deleteBtn.textContent = 'Eliminar';
     deleteBtn.onclick = () => {
       removeTask(idx);
-      renderTasks();
+      renderTasks(filter);
     };
     li.appendChild(deleteBtn);
 
-    
     list.appendChild(li);
   });
 }
@@ -45,8 +63,15 @@ form.onsubmit = e => {
   e.preventDefault();
   addTask(input.value);
   input.value = '';
-  renderTasks();
+  renderTasks("all");
 };
 
+// Filtrar tareas
+document.getElementById('show-all').onclick = () => renderTasks('all');
+document.getElementById('show-completed').onclick = () => renderTasks('completed');
+document.getElementById('show-pending').onclick = () => renderTasks('pending');
+
+
 // Render inicial de las tareas
-renderTasks(); 
+renderTasks("all"); 
+

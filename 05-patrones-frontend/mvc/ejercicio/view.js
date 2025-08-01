@@ -14,7 +14,19 @@ export class TaskView {
       const li = document.createElement('li');
       li.textContent = task;
       // TODO: Agrega aquí el botón y la lógica para eliminar la tarea
+      const btnEliminar = document.createElement('button');
+      btnEliminar.textContent = 'Eliminar';
+      btnEliminar.className = 'remove';
+      btnEliminar.dataset.idx = idx;
+      li.appendChild(btnEliminar);
+      
       // TODO: Agrega aquí el botón y la lógica para editar la tarea
+      const btnEditar = document.createElement('button');
+      btnEditar.textContent = 'Editar';
+      btnEditar.className = 'edit';
+      btnEditar.dataset.idx = idx;
+      li.appendChild(btnEditar);
+      
       this.list.appendChild(li);
     });
   }
@@ -29,8 +41,26 @@ export class TaskView {
   }
 
   // TODO: Asocia el evento de eliminar tarea a la lista
-  // bindRemoveTask(handler) { ... }
+  bindRemoveTask(handler) {
+    this.removeHandler = handler;
+  }
 
   // TODO: Asocia el evento de editar tarea a la lista
-  // bindEditTask(handler) { ... }
+  bindEditTask(handler) {
+    this.editHandler = handler;
+    
+    // Configurar el evento click único para manejar ambas acciones
+    this.list.onclick = e => {
+      if (e.target.classList.contains('remove')) {
+        this.removeHandler(Number(e.target.dataset.idx));
+      } else if (e.target.classList.contains('edit')) {
+        const idx = Number(e.target.dataset.idx);
+        const currentTask = e.target.parentNode.firstChild.textContent;
+        const newTask = prompt('Editar tarea:', currentTask);
+        if (newTask && newTask !== currentTask) {
+          this.editHandler(idx, newTask);
+        }
+      }
+    };
+  }
 } 

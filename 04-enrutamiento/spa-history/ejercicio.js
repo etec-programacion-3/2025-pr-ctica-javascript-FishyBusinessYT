@@ -5,8 +5,9 @@ const app = document.getElementById('app');
 const routes = {
   '/': () => '<h1>Inicio</h1><p>Bienvenido a la SPA.</p>',
   '/productos': () => '<h1>Productos</h1><p>Lista de productos aquí.</p>',
-  '/contacto': () => '<h1>Contacto</h1><p>Formulario de contacto aquí.</p>'
-  // TODO: Agrega aquí la ruta y la vista para /producto/1
+  '/contacto': () => '<h1>Contacto</h1><p>Formulario de contacto aquí.</p>',
+  // Ruta para /producto/1
+  '/producto/1': () => '<h1>Producto 1</h1><p>Detalles del producto 1 aquí.</p>' 
 };
 
 // Renderiza la vista correspondiente a la ruta actual
@@ -30,8 +31,10 @@ document.querySelector('nav').addEventListener('click', e => {
   }
 });
 
-// TODO: Maneja el evento popstate para soportar navegación con los botones del navegador
-// window.addEventListener(...)
+// Maneja el evento popstate para soportar navegación con los botones del navegador
+window.addEventListener('popstate', () => {
+  render(window.location.pathname);
+});
 
 // Render inicial según la ruta actual
-render(window.location.pathname); 
+render(window.location.pathname);
